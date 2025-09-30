@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Nexus - Student Club Management</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="login-header">
+                <h2>Welcome to CampusNexus</h2>
+                <p>Please login to continue</p>
+            </div>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username">Username or Email</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn-login">Login</button>
+            </form>
+            <div class="login-options">
+                <button type="button" class="btn-register" onclick="showRegister()">Create Account</button>
+                <button type="button" class="btn-demo" onclick="loginAsDemo()">Try Demo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="registerModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="login-header">
+                <h2>Create Account</h2>
+                <p>Join CampusNexus today</p>
+            </div>
+            <form id="registerForm" class="login-form">
+                <div class="form-group">
+                    <label for="regName">Full Name</label>
+                    <input type="text" id="regName" required>
+                </div>
+                <div class="form-group">
+                    <label for="regEmail">Email</label>
+                    <input type="email" id="regEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="regUsername">Username</label>
+                    <input type="text" id="regUsername" required>
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Password</label>
+                    <input type="password" id="regPassword" required>
+                </div>
+                <div class="form-group">
+                    <label for="regRole">Role</label>
+                    <select id="regRole" required>
+                        <option value="student">Student</option>
+                        <option value="club_leader">Club Leader</option>
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-login">Create Account</button>
+            </form>
+            <div class="login-options">
+                <button type="button" class="btn-back" onclick="showLogin()">Back to Login</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar hidden">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <span class="logo-icon">🎓</span>
+                <span class="logo-text gradient-text-nav">CampusNexus</span>
+            </div>
+            <div class="nav-links">
+                <a href="#dashboard" class="nav-link active">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="#clubs" class="nav-link">
+                    <i class="fas fa-users"></i> Clubs
+                </a>
+                <a href="#analytics" class="nav-link">
+                    <i class="fas fa-chart-line"></i> Analytics
+                </a>
+                <a href="#operations" class="nav-link">
+                    <i class="fas fa-project-diagram"></i> Set Operations
+                </a>
+                <a href="#events" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i> Events
+                </a>
+            </div>
+            <div class="user-menu">
+                <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+                <span id="userInfo" class="user-info"></span>
+                <button class="btn-logout" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content hidden">
+        <!-- Dashboard Section -->
+        <section id="dashboard" class="section active">
+            <div class="dashboard-header">
+                <div class="gradient-text-title">Campus Engagement Dashboard</div>
+                <p class="subtitle">Real-time student club management system</p>
+            </div>
+
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card pulse-animation">
+                    <div class="stat-icon gradient-icon">👥</div>
+                    <div class="stat-content">
+                        <h3 class="gradient-number" id="total-students">0</h3>
+                        <p>Total Students</p>
+                    </div>
+                </div>
+                <div class="stat-card pulse-animation">
+                    <div class="stat-icon gradient-icon">🎯</div>
+                    <div class="stat-content">
+                        <h3 class="gradient-number" id="total-clubs">0</h3>
+                        <p>Active Clubs</p>
+                    </div>
+                </div>
+                <div class="stat-card pulse-animation">
+                    <div class="stat-icon gradient-icon">⭐</div>
+                    <div class="stat-content">
+                        <h3 class="gradient-number" id="multi-club">0</h3>
+                        <p>Multi-Club Members</p>
+                    </div>
+                </div>
+                <div class="stat-card pulse-animation">
+                    <div class="stat-icon gradient-icon">📊</div>
+                    <div class="stat-content">
+                        <h3 class="gradient-number" id="participation-rate">0%</h3>
+                        <p>Participation Rate</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Animated Galaxy View -->
+            <div class="galaxy-container">
+                <div class="gradient-text-section">Club Relationship Galaxy</div>
+                <div class="galaxy" id="galaxy-view"></div>
+            </div>
+        </section>
+
+        <!-- Clubs Section -->
+        <section id="clubs" class="section">
+            <div class="section-header">
+                <h2 class="section-title gradient-text-section">Club Management</h2>
+                <div class="section-actions">
+                    <div class="search-bar">
+                        <div class="search-input">
+                            <input type="text" id="club-search" placeholder="Search clubs...">
+                            <i class="fas fa-search search-icon"></i>
+                        </div>
+                        <select id="category-filter">
+                            <option value="">All Categories</option>
+                            <option value="academic">Academic</option>
+                            <option value="sports">Sports</option>
+                            <option value="arts">Arts</option>
+                            <option value="service">Service</option>
+                        </select>
+                        <button class="btn-primary gradient-btn" onclick="addDemoClub()">
+                            <i class="fas fa-plus"></i> Add Club
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="filter-tags" id="active-filters"></div>
+            <div class="clubs-grid" id="clubs-grid"></div>
+        </section>
+
+        <!-- Analytics Section -->
+        <section id="analytics" class="section">
+            <div class="section-header">
+                <h2>Engagement Analytics</h2>
+                <div class="time-filter">
+                    <select id="time-range">
+                        <option value="7d">Last 7 Days</option>
+                        <option value="30d">Last 30 Days</option>
+                        <option value="90d">Last 90 Days</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="engagement-stats"></div>
+
+            <div class="analytics-grid">
+                <div class="chart-container">
+                    <h3>Club Health Scores</h3>
+                    <div class="health-chart" id="health-chart"></div>
+                </div>
+                <div class="chart-container">
+                    <h3>Student Engagement Distribution</h3>
+                    <canvas id="engagement-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="analytics-grid">
+                <div class="chart-container">
+                    <h3>Membership Growth Trend</h3>
+                    <canvas id="membership-chart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Membership Distribution</h3>
+                    <div class="venn-diagram" id="venn-diagram">
+                        <div class="venn-circle club-a">Club A</div>
+                        <div class="venn-circle club-b">Club B</div>
+                        <div class="venn-overlap">Overlap</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- At-Risk Students -->
+            <div class="risk-section">
+                <h3>At-Risk Students <span class="risk-badge" id="risk-count">0</span></h3>
+                <div class="risk-list" id="risk-list"></div>
+            </div>
+        </section>
+
+        <!-- Set Operations Section -->
+        <section id="operations" class="section">
+            <div class="section-header">
+                <h2>Set Operations Playground</h2>
+                <p>Visualize club membership relationships</p>
+            </div>
+
+            <div class="operations-panel">
+                <div class="operation-controls">
+                    <select id="operation-type">
+                        <option value="intersection">Intersection (A ∩ B)</option>
+                        <option value="union">Union (A ∪ B)</option>
+                        <option value="difference">Difference (A - B)</option>
+                        <option value="complement">Complement</option>
+                    </select>
+                    <select id="club-a">
+                        <option value="">Select Club A</option>
+                    </select>
+                    <select id="club-b">
+                        <option value="">Select Club B</option>
+                    </select>
+                    <button class="btn-primary" onclick="performOperation()">Run Operation</button>
+                </div>
+
+                <div class="operation-result">
+                    <h4>Operation Result: <span id="result-count">0</span> students</h4>
+                    <div class="student-list" id="operation-result-list"></div>
+                </div>
+
+                <!-- Animated Set Visualization -->
+                <div class="set-visualization">
+                    <div class="set-a">Club A</div>
+                    <div class="set-b">Club B</div>
+                    <div class="set-overlap"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Events Section -->
+        <section id="events" class="section">
+            <div class="section-header">
+                <h2 class="section-title gradient-text-section">Club Events</h2>
+                <div class="section-actions">
+                    <button class="btn-primary" onclick="addEvent()">
+                        <i class="fas fa-plus"></i> Add Event
+                    </button>
+                </div>
+            </div>
+            <div class="events-grid" id="events-grid">
+                <!-- Events will be populated here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Notification Container -->
+    <div class="notification-container" id="notification-container"></div>
+
+    <!-- Floating Action Button -->
+    <div class="fab gradient-fab" onclick="refreshData()" title="Refresh Data">
+        <i class="fas fa-sync-alt"></i>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="animations.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
